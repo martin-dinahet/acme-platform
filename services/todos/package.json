@@ -1,0 +1,33 @@
+{
+  "name": "todos-service",
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "lint": "biome lint .",
+    "format": "biome format --write .",
+    "typecheck": "tsc --noEmit",
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "db:generate": "prisma generate",
+    "db:migrate": "prisma migrate dev",
+    "db:deploy": "prisma migrate deploy && prisma generate"
+  },
+  "dependencies": {
+    "@acme/env": "workspace:*",
+    "@hono/node-server": "^1.13.0",
+    "@hono/zod-validator": "^0.9.1",
+    "@prisma/adapter-pg": "^7.0.0",
+    "@prisma/client": "7.10.0",
+    "hono": "^4.6.0",
+    "pg": "^8.0.0",
+    "zod": "^3.23.0"
+  },
+  "devDependencies": {
+    "@acme/typescript-config": "workspace:*",
+    "@types/node": "latest",
+    "@types/pg": "latest",
+    "prisma": "7.10.0",
+    "tsx": "latest",
+    "typescript": "latest"
+  }
+}
