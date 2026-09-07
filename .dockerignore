@@ -1,0 +1,10 @@
+node_modules
+**/node_modules
+**/dist
+**/.turbo
+**/src/prisma/generated
+.env
+**/.env
+.git
+.gitignore
+.editorconfig
