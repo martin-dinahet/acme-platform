@@ -1,0 +1,8 @@
+node_modules
+dist
+
+.env
+.turbo
+
+# Generated Prisma client
+**/src/prisma/generated
