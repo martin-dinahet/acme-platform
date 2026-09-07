@@ -1,0 +1,25 @@
+{
+  "name": "@acme/env",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/env.d.ts",
+      "default": "./dist/env.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc",
+    "typecheck": "tsc --noEmit"
+  },
+  "files": [
+    "dist"
+  ],
+  "dependencies": {
+    "dotenv": "^16.0.0",
+    "zod": "^3.23.0"
+  },
+  "devDependencies": {
+    "@acme/typescript-config": "workspace:*",
+    "typescript": "latest"
+  }
+}
