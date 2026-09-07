@@ -1,0 +1,6 @@
+{
+  "name": "@acme/typescript-config",
+  "files": [
+    "base.json"
+  ]
+}
