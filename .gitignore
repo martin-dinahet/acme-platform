@@ -1,8 +1,8 @@
 node_modules
 dist
+generated
+
 
 .env
 .turbo
-
-# Generated Prisma client
-**/src/prisma/generated
+.zed
