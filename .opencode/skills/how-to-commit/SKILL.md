@@ -1,6 +1,6 @@
 ---
-title: How to commit
-description: Use this when commiting a change. Yes, always.
+name: how-to-commit
+description: Commit a change. Use for every commit.
 ---
 
 - Only message, no description.
