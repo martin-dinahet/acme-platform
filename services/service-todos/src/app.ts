@@ -1,8 +1,8 @@
-import { Hono } from "hono";
-import { prisma } from "./prisma.js";
 import { zValidator } from "@hono/zod-validator";
-import { z } from "zod";
+import { Hono } from "hono";
 import { HTTPException } from "hono/http-exception";
+import { z } from "zod";
+import { prisma } from "./lib/prisma.js";
 
 const CreateTodoSchema = z.object({
   title: z.string().min(1),
@@ -45,3 +45,5 @@ export const app = new Hono() //
     if (!todo) throw new HTTPException(500, { message: "Internal server error" });
     return c.json({ todo }, 200);
   });
+
+export type AppType = typeof app;
