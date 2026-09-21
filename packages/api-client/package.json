@@ -1,0 +1,33 @@
+{
+  "name": "@acme/api-client",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "lint": "biome lint .",
+    "format": "biome check --write .",
+    "typecheck": "tsc --noEmit",
+    "build": "tsc"
+  },
+  "files": [
+    "dist"
+  ],
+  "dependencies": {
+    "better-auth": "^1.7.5",
+    "hono": "^4.13.8",
+    "todos-service": "workspace:*"
+  },
+  "peerDependencies": {
+    "react": "^19.0.0"
+  },
+  "devDependencies": {
+    "@acme/typescript-config": "workspace:*",
+    "@types/react": "^19.3.0",
+    "react": "^19.3.0",
+    "typescript": "latest"
+  }
+}
