@@ -1,0 +1,27 @@
+{
+  "name": "gateway-service",
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "lint": "biome lint .",
+    "format": "biome check --write .",
+    "typecheck": "tsc --noEmit",
+    "build": "tsc",
+    "start": "node dist/index.js"
+  },
+  "dependencies": {
+    "@acme/auth": "workspace:*",
+    "@acme/env": "workspace:*",
+    "@hono/node-server": "^1.13.0",
+    "dotenv": "^16.6.1",
+    "hono": "^4.13.8",
+    "jose": "^6.2.12",
+    "zod": "^3.23.0"
+  },
+  "devDependencies": {
+    "@acme/typescript-config": "workspace:*",
+    "@types/node": "latest",
+    "tsx": "latest",
+    "typescript": "latest"
+  }
+}
