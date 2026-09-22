@@ -60,5 +60,19 @@ services:
     ports:
       - "5173:80"
 
+  login:
+    build:
+      context: .
+      dockerfile: services/web-login/Dockerfile
+      args:
+        VITE_API_URL: http://localhost:3000
+        VITE_APP_URL: http://localhost:5173
+    container_name: acme-login
+    restart: unless-stopped
+    depends_on:
+      - gateway
+    ports:
+      - "5174:80"
+
 volumes:
   pgdata:
