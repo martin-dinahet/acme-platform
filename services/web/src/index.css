@@ -1,0 +1,16 @@
+/* Reset only. All real styling is StyleX, compiled and appended to this asset at build time. */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+}

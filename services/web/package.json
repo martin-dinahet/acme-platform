@@ -10,12 +10,15 @@
   },
   "dependencies": {
     "@acme/api-client": "workspace:*",
+    "@acme/ui": "workspace:*",
+    "@stylexjs/stylex": "^0.19.1",
     "react": "^19.3.0",
     "react-dom": "^19.3.0",
     "zod": "^3.23.0"
   },
   "devDependencies": {
     "@acme/typescript-config": "workspace:*",
+    "@stylexjs/unplugin": "^0.19.1",
     "@types/node": "latest",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",

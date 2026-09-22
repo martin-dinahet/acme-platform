@@ -53,6 +53,7 @@ services:
       dockerfile: services/web/Dockerfile
       args:
         VITE_API_URL: http://localhost:3000
+        VITE_LOGIN_URL: http://localhost:5174
     container_name: acme-web
     restart: unless-stopped
     depends_on:
