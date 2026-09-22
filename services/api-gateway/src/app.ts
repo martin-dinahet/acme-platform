@@ -12,8 +12,8 @@ const PUBLIC = ["/api/auth/*"];
 
 export const app = new Hono<{ Variables: { jwt: string } }>() //
   .basePath("/api")
-  .use("*", cors({ origin: env.WEB_ORIGIN, credentials: true }))
-  .use("*", except(PUBLIC, csrf({ origin: env.WEB_ORIGIN }), requireAuth))
+  .use("*", cors({ origin: env.WEB_ORIGINS, credentials: true }))
+  .use("*", except(PUBLIC, csrf({ origin: env.WEB_ORIGINS }), requireAuth))
   .on(["GET", "POST"], "/auth/*", (c) => authHandler(new Request(c.req.raw, { headers: clientHeaders(c) })))
   .all("/todos/*", (c) =>
     forward(c, env.TODOS_URL, c.req.path.replace(/^\/api/, ""), {

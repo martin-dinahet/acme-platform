@@ -36,11 +36,11 @@ services:
     environment:
       PORT: 3000
       TODOS_URL: http://todos:3001
-      WEB_ORIGIN: http://localhost:5173
+      WEB_ORIGINS: http://localhost:5173,http://localhost:5174
       DATABASE_URL: postgresql://postgres:postgres@postgres:5432/auth_service
       BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET:-dev-only-secret-change-me-0123456789}
       BETTER_AUTH_URL: http://localhost:3000
-      TRUSTED_ORIGINS: http://localhost:5173
+      TRUSTED_ORIGINS: http://localhost:5173,http://localhost:5174
     depends_on:
       - postgres
       - todos
