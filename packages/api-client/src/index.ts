@@ -1,4 +1,5 @@
 import { createAuthClient } from "better-auth/react";
+import type { InferResponseType } from "hono/client";
 import { hc } from "hono/client";
 import type { AppType as TodosApp } from "todos-service/app";
 
@@ -12,3 +13,6 @@ export const createApiClient = (baseUrl: string) => ({
 });
 
 export type ApiClient = ReturnType<typeof createApiClient>;
+
+/** A todo as the gateway returns it over the wire (Prisma `Date` fields become ISO strings). */
+export type Todo = InferResponseType<ApiClient["todos"]["todos"]["$get"], 200>["todos"][number];
