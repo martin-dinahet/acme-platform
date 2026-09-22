@@ -16,7 +16,7 @@ services:
   todos:
     build:
       context: .
-      dockerfile: services/todos/Dockerfile
+      dockerfile: services/service-todos/Dockerfile
     container_name: acme-todos
     restart: unless-stopped
     environment:
