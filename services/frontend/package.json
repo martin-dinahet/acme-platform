@@ -1,5 +1,5 @@
 {
-  "name": "web-service",
+  "name": "@acme/frontend",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -9,12 +9,12 @@
     "build": "vite build"
   },
   "dependencies": {
-    "@acme/api-client": "workspace:*",
+    "@acme/frontend-auth": "workspace:*",
+    "@acme/frontend-todos": "workspace:*",
     "@acme/ui": "workspace:*",
     "@stylexjs/stylex": "^0.19.1",
     "react": "^19.3.0",
-    "react-dom": "^19.3.0",
-    "zod": "^3.23.0"
+    "react-dom": "^19.3.0"
   },
   "devDependencies": {
     "@acme/typescript-config": "workspace:*",
