@@ -14,6 +14,11 @@ const UpdateTodoSchema = z.object({
   completed: z.boolean().optional(),
 });
 
+// Public API for other backend modules. They import these; they never touch the todos DB.
+export const createTodo = (title: string) => prisma.todo.create({ data: { title } });
+export const findTodos = (ids: string[]) => prisma.todo.findMany({ where: { id: { in: ids } } });
+export const deleteTodos = (ids: string[]) => prisma.todo.deleteMany({ where: { id: { in: ids } } });
+
 export const todosRoutes = new Hono() //
   .get("/todos", async (c) => {
     const todos = await prisma.todo.findMany();
