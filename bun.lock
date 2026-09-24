@@ -20,7 +20,6 @@
         "@prisma/client": "7.10.0",
         "better-auth": "^1.7.5",
         "dotenv": "^16.6.1",
-        "hono": "^4.13.8",
         "pg": "^8.23.0",
         "zod": "^3.23.0",
       },
@@ -35,7 +34,6 @@
     "packages/backend/routines": {
       "name": "@acme/backend-routines",
       "dependencies": {
-        "@acme/backend-todos": "workspace:*",
         "@acme/env": "workspace:*",
         "@hono/zod-validator": "^0.9.1",
         "@prisma/adapter-pg": "^7.0.0",
@@ -161,12 +159,10 @@
         "react-dom": "^19.3.0",
       },
     },
-    "services/backend": {
-      "name": "@acme/backend",
+    "services/auth": {
+      "name": "@acme/service-auth",
       "dependencies": {
         "@acme/backend-auth": "workspace:*",
-        "@acme/backend-routines": "workspace:*",
-        "@acme/backend-todos": "workspace:*",
         "@acme/env": "workspace:*",
         "@hono/node-server": "^1.13.0",
         "hono": "^4.13.8",
@@ -200,6 +196,53 @@
         "vite": "^8.3.0",
       },
     },
+    "services/gateway": {
+      "name": "@acme/service-gateway",
+      "dependencies": {
+        "@acme/env": "workspace:*",
+        "@hono/node-server": "^1.13.0",
+        "hono": "^4.13.8",
+        "zod": "^3.23.0",
+      },
+      "devDependencies": {
+        "@acme/typescript-config": "workspace:*",
+        "@types/node": "latest",
+        "tsx": "latest",
+        "typescript": "latest",
+      },
+    },
+    "services/routines": {
+      "name": "@acme/service-routines",
+      "dependencies": {
+        "@acme/backend-routines": "workspace:*",
+        "@acme/env": "workspace:*",
+        "@hono/node-server": "^1.13.0",
+        "hono": "^4.13.8",
+        "zod": "^3.23.0",
+      },
+      "devDependencies": {
+        "@acme/typescript-config": "workspace:*",
+        "@types/node": "latest",
+        "tsx": "latest",
+        "typescript": "latest",
+      },
+    },
+    "services/todos": {
+      "name": "@acme/service-todos",
+      "dependencies": {
+        "@acme/backend-todos": "workspace:*",
+        "@acme/env": "workspace:*",
+        "@hono/node-server": "^1.13.0",
+        "hono": "^4.13.8",
+        "zod": "^3.23.0",
+      },
+      "devDependencies": {
+        "@acme/typescript-config": "workspace:*",
+        "@types/node": "latest",
+        "tsx": "latest",
+        "typescript": "latest",
+      },
+    },
   },
   "trustedDependencies": [
     "esbuild",
@@ -208,8 +251,6 @@
     "@prisma/client",
   ],
   "packages": {
-    "@acme/backend": ["@acme/backend@workspace:services/backend"],
-
     "@acme/backend-auth": ["@acme/backend-auth@workspace:packages/backend/auth"],
 
     "@acme/backend-routines": ["@acme/backend-routines@workspace:packages/backend/routines"],
@@ -223,6 +264,14 @@
     "@acme/frontend-auth": ["@acme/frontend-auth@workspace:packages/frontend/auth"],
 
     "@acme/frontend-todos": ["@acme/frontend-todos@workspace:packages/frontend/todos"],
+
+    "@acme/service-auth": ["@acme/service-auth@workspace:services/auth"],
+
+    "@acme/service-gateway": ["@acme/service-gateway@workspace:services/gateway"],
+
+    "@acme/service-routines": ["@acme/service-routines@workspace:services/routines"],
+
+    "@acme/service-todos": ["@acme/service-todos@workspace:services/todos"],
 
     "@acme/typescript-config": ["@acme/typescript-config@workspace:packages/lib/typescript-config"],
 

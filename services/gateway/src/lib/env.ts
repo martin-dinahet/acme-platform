@@ -9,5 +9,9 @@ export const env = createEnv(
       .string()
       .transform((value) => value.split(",").filter(Boolean))
       .pipe(z.array(z.string().url()).min(1)),
+    // Internal base URLs of the downstream services.
+    AUTH_SERVICE_URL: z.string().url(),
+    TODOS_SERVICE_URL: z.string().url(),
+    ROUTINES_SERVICE_URL: z.string().url(),
   }),
 );

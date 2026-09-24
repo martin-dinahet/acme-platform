@@ -21,7 +21,6 @@
     "dist"
   ],
   "dependencies": {
-    "@acme/backend-todos": "workspace:*",
     "@acme/env": "workspace:*",
     "@hono/zod-validator": "^0.9.1",
     "@prisma/adapter-pg": "^7.0.0",

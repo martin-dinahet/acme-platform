@@ -13,25 +13,66 @@ services:
       - pgdata:/var/lib/postgresql/data
       - ./scripts/init-databases.sh:/docker-entrypoint-initdb.d/init-databases.sh
 
-  backend:
+  # Only public backend entry point. The services below have no published ports.
+  gateway:
     build:
       context: .
-      dockerfile: services/backend/Dockerfile
-    container_name: acme-backend
+      dockerfile: services/gateway/Dockerfile
+    container_name: acme-gateway
     restart: unless-stopped
     environment:
       PORT: 3000
       WEB_ORIGINS: http://localhost:5173
+      AUTH_SERVICE_URL: http://auth:3001
+      TODOS_SERVICE_URL: http://todos:3002
+      ROUTINES_SERVICE_URL: http://routines:3003
+    depends_on:
+      - auth
+      - todos
+      - routines
+    ports:
+      - "3000:3000"
+
+  auth:
+    build:
+      context: .
+      dockerfile: services/auth/Dockerfile
+    container_name: acme-auth
+    restart: unless-stopped
+    environment:
+      PORT: 3001
       AUTH_DATABASE_URL: postgresql://postgres:postgres@postgres:5432/auth_service
-      TODOS_DATABASE_URL: postgresql://postgres:postgres@postgres:5432/todos_service
-      ROUTINES_DATABASE_URL: postgresql://postgres:postgres@postgres:5432/routines_service
       BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET:-dev-only-secret-change-me-0123456789}
       BETTER_AUTH_URL: http://localhost:3000
       TRUSTED_ORIGINS: http://localhost:5173
     depends_on:
       - postgres
-    ports:
-      - "3000:3000"
+
+  todos:
+    build:
+      context: .
+      dockerfile: services/todos/Dockerfile
+    container_name: acme-todos
+    restart: unless-stopped
+    environment:
+      PORT: 3002
+      TODOS_DATABASE_URL: postgresql://postgres:postgres@postgres:5432/todos_service
+    depends_on:
+      - postgres
+
+  routines:
+    build:
+      context: .
+      dockerfile: services/routines/Dockerfile
+    container_name: acme-routines
+    restart: unless-stopped
+    environment:
+      PORT: 3003
+      ROUTINES_DATABASE_URL: postgresql://postgres:postgres@postgres:5432/routines_service
+      TODOS_SERVICE_URL: http://todos:3002
+    depends_on:
+      - postgres
+      - todos
 
   frontend:
     build:
@@ -42,7 +83,7 @@ services:
     container_name: acme-frontend
     restart: unless-stopped
     depends_on:
-      - backend
+      - gateway
     ports:
       - "5173:80"
 

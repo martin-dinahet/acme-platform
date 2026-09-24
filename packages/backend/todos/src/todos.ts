@@ -14,10 +14,7 @@ const UpdateTodoSchema = z.object({
   completed: z.boolean().optional(),
 });
 
-// Public API for other backend modules. They import these; they never touch the todos DB.
-export const createTodo = (title: string) => prisma.todo.create({ data: { title } });
-export const findTodos = (ids: string[]) => prisma.todo.findMany({ where: { id: { in: ids } } });
-export const deleteTodos = (ids: string[]) => prisma.todo.deleteMany({ where: { id: { in: ids } } });
+const IdsSchema = z.object({ ids: z.array(z.string()) });
 
 export const todosRoutes = new Hono() //
   .get("/todos", async (c) => {
@@ -52,3 +49,18 @@ export const todosRoutes = new Hono() //
   });
 
 export type TodosApp = typeof todosRoutes;
+
+/** Service-to-service API for other backend services. The gateway never exposes it. */
+export const todosInternalRoutes = new Hono()
+  .post("/todos", zValidator("json", CreateTodoSchema.pick({ title: true })), async (c) => {
+    const todo = await prisma.todo.create({ data: c.req.valid("json") });
+    return c.json({ todo }, 201);
+  })
+  .post("/todos/find", zValidator("json", IdsSchema), async (c) => {
+    const todos = await prisma.todo.findMany({ where: { id: { in: c.req.valid("json").ids } } });
+    return c.json({ todos }, 200);
+  })
+  .post("/todos/delete", zValidator("json", IdsSchema), async (c) => {
+    await prisma.todo.deleteMany({ where: { id: { in: c.req.valid("json").ids } } });
+    return c.body(null, 204);
+  });

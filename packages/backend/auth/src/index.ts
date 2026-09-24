@@ -1,1 +1,1 @@
-export { type AuthVariables, authHandler, requireAuth } from "./lib/auth.js";
+export { authHandler } from "./lib/auth.js";

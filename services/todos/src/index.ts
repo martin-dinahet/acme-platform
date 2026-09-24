@@ -3,5 +3,5 @@ import { app } from "./app.js";
 import { env } from "./lib/env.js";
 
 serve({ fetch: app.fetch, port: env.PORT }, (info) => {
-  console.log(`backend is running on port ${info.port}`);
+  console.log(`todos is running on port ${info.port}`);
 });

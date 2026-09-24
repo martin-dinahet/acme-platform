@@ -1,5 +1,5 @@
 {
-  "name": "@acme/backend",
+  "name": "@acme/service-todos",
   "type": "module",
   "scripts": {
     "dev": "tsx watch src/index.ts",
@@ -10,8 +10,6 @@
     "start": "node dist/index.js"
   },
   "dependencies": {
-    "@acme/backend-auth": "workspace:*",
-    "@acme/backend-routines": "workspace:*",
     "@acme/backend-todos": "workspace:*",
     "@acme/env": "workspace:*",
     "@hono/node-server": "^1.13.0",
