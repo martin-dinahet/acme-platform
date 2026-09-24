@@ -9,11 +9,15 @@ const styles = stylex.create({
     display: "flex",
     flexDirection: "column",
     gap: space.sm,
+    listStyle: "none",
+    margin: 0,
+    padding: 0,
   },
   empty: {
     fontSize: font.sizeSm,
     color: color.textMuted,
     textAlign: "center",
+    margin: 0,
     padding: space.xl,
   },
 });
