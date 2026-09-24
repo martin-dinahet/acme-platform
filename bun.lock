@@ -32,6 +32,27 @@
         "typescript": "latest",
       },
     },
+    "packages/backend/routines": {
+      "name": "@acme/backend-routines",
+      "dependencies": {
+        "@acme/backend-todos": "workspace:*",
+        "@acme/env": "workspace:*",
+        "@hono/zod-validator": "^0.9.1",
+        "@prisma/adapter-pg": "^7.0.0",
+        "@prisma/client": "7.10.0",
+        "dotenv": "^16.6.1",
+        "hono": "^4.13.8",
+        "pg": "^8.0.0",
+        "zod": "^3.23.0",
+      },
+      "devDependencies": {
+        "@acme/typescript-config": "workspace:*",
+        "@types/node": "latest",
+        "@types/pg": "latest",
+        "prisma": "7.10.0",
+        "typescript": "latest",
+      },
+    },
     "packages/backend/todos": {
       "name": "@acme/backend-todos",
       "dependencies": {
@@ -89,6 +110,25 @@
         "react": "^19.3.0",
       },
     },
+    "packages/frontend/ui-showcase": {
+      "name": "@acme/ui-showcase",
+      "dependencies": {
+        "@acme/ui": "workspace:*",
+        "@stylexjs/stylex": "^0.19.1",
+        "react": "^19.3.0",
+        "react-dom": "^19.3.0",
+      },
+      "devDependencies": {
+        "@acme/typescript-config": "workspace:*",
+        "@stylexjs/unplugin": "^0.19.1",
+        "@types/node": "latest",
+        "@types/react": "^19.3.0",
+        "@types/react-dom": "^19.3.0",
+        "@vitejs/plugin-react": "^6.1.1",
+        "typescript": "latest",
+        "vite": "^8.3.0",
+      },
+    },
     "packages/lib/env": {
       "name": "@acme/env",
       "dependencies": {
@@ -125,6 +165,7 @@
       "name": "@acme/backend",
       "dependencies": {
         "@acme/backend-auth": "workspace:*",
+        "@acme/backend-routines": "workspace:*",
         "@acme/backend-todos": "workspace:*",
         "@acme/env": "workspace:*",
         "@hono/node-server": "^1.13.0",
@@ -171,6 +212,8 @@
 
     "@acme/backend-auth": ["@acme/backend-auth@workspace:packages/backend/auth"],
 
+    "@acme/backend-routines": ["@acme/backend-routines@workspace:packages/backend/routines"],
+
     "@acme/backend-todos": ["@acme/backend-todos@workspace:packages/backend/todos"],
 
     "@acme/env": ["@acme/env@workspace:packages/lib/env"],
@@ -184,6 +227,8 @@
     "@acme/typescript-config": ["@acme/typescript-config@workspace:packages/lib/typescript-config"],
 
     "@acme/ui": ["@acme/ui@workspace:packages/lib/ui"],
+
+    "@acme/ui-showcase": ["@acme/ui-showcase@workspace:packages/frontend/ui-showcase"],
 
     "@babel/code-frame": ["@babel/code-frame@7.29.7", "", { "dependencies": { "@babel/helper-validator-identifier": "^7.29.7", "js-tokens": "^4.0.0", "picocolors": "^1.1.1" } }, "sha512-Aup7aUOfpbAUg2ROOJN6Iw5f9DMBlzu0mIkm/malLQFN/YQgO48wCj0Kxa3sEHJvPVFg7siR+qRInwXd2qhQKw=="],
 
