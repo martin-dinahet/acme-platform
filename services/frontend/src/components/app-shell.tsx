@@ -1,4 +1,4 @@
-import { color, font, space } from "@acme/ui/tokens.stylex";
+import { color, font, size, space } from "@acme/ui/tokens.stylex";
 import * as stylex from "@stylexjs/stylex";
 import type { ReactNode } from "react";
 
@@ -13,7 +13,7 @@ const styles = stylex.create({
     alignItems: "center",
     justifyContent: "space-between",
     padding: space.lg,
-    borderBottomWidth: "1px",
+    borderBottomWidth: size.borderWidth,
     borderBottomStyle: "solid",
     borderBottomColor: color.border,
     backgroundColor: color.bg,
@@ -25,7 +25,7 @@ const styles = stylex.create({
     margin: 0,
   },
   main: {
-    maxWidth: "560px",
+    maxWidth: size.contentMaxWidth,
     margin: "0 auto",
     padding: space.xl,
     display: "flex",

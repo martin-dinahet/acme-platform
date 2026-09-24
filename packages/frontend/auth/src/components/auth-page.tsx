@@ -1,5 +1,5 @@
 import { Button, Callout, Card, TextField } from "@acme/ui";
-import { color, font, space } from "@acme/ui/tokens.stylex";
+import { color, font, size, space } from "@acme/ui/tokens.stylex";
 import * as stylex from "@stylexjs/stylex";
 import { type SubmitEvent, useState, useTransition } from "react";
 import { authClient } from "../api/client.js";
@@ -16,7 +16,7 @@ const styles = stylex.create({
   },
   card: {
     width: "100%",
-    maxWidth: "360px",
+    maxWidth: size.formMaxWidth,
   },
   form: {
     display: "flex",
