@@ -3,7 +3,6 @@ import { z } from "zod";
 
 export const env = createEnv(
   z.object({
-    PORT: z.coerce.number().default(3001),
-    DATABASE_URL: z.string(),
+    TODOS_DATABASE_URL: z.string(),
   }),
 );

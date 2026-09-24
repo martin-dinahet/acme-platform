@@ -14,7 +14,7 @@ const UpdateTodoSchema = z.object({
   completed: z.boolean().optional(),
 });
 
-export const app = new Hono() //
+export const todosRoutes = new Hono() //
   .get("/todos", async (c) => {
     const todos = await prisma.todo.findMany();
     if (!todos) throw new HTTPException(500, { message: "Internal server error" });
@@ -46,4 +46,4 @@ export const app = new Hono() //
     return c.json({ todo }, 200);
   });
 
-export type AppType = typeof app;
+export type TodosApp = typeof todosRoutes;
