@@ -1,6 +1,7 @@
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
-import { jwt } from "better-auth/plugins";
+import { createMiddleware } from "hono/factory";
+import { HTTPException } from "hono/http-exception";
 import { env } from "./env.js";
 import { prisma } from "./prisma.js";
 
@@ -10,19 +11,18 @@ const auth = betterAuth({
   trustedOrigins: env.TRUSTED_ORIGINS,
   database: prismaAdapter(prisma, { provider: "postgresql" }),
   emailAndPassword: { enabled: true },
-  plugins: [jwt()],
 });
+
+export type AuthVariables = { user: typeof auth.$Infer.Session.user };
 
 /** Serves the Better Auth routes (`/api/auth/*`). */
 export const authHandler = (request: Request): Promise<Response> => auth.handler(request);
 
-/** Swaps a session (cookie headers) for a short-lived JWT. Returns null without a valid session. */
-export const getJwt = async (headers: Headers): Promise<string | null> => {
-  try {
-    const { token } = await auth.api.getToken({ headers });
-    return token;
-  } catch (error) {
-    if (error instanceof Error && "statusCode" in error && error.statusCode === 401) return null;
-    throw error;
-  }
-};
+/** Rejects requests without a valid session cookie. Sets `user` on the context. */
+export const requireAuth = createMiddleware<{ Variables: AuthVariables }>(async (c, next) => {
+  const session = await auth.api.getSession({ headers: c.req.raw.headers });
+  if (!session) throw new HTTPException(401, { message: "Unauthorized" });
+
+  c.set("user", session.user);
+  await next();
+});
