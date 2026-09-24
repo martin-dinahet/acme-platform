@@ -1,0 +1,39 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/prisma/generated"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+/// A reusable checklist. Applying it creates one todo per step.
+model Routine {
+  id        String        @id @default(cuid())
+  name      String
+  steps     RoutineStep[]
+  runs      RoutineRun[]
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+}
+
+model RoutineStep {
+  id        String  @id @default(cuid())
+  routineId String
+  routine   Routine @relation(fields: [routineId], references: [id], onDelete: Cascade)
+  position  Int
+  title     String
+
+  @@unique([routineId, position])
+}
+
+/// One application of a routine. `todoIds` point into the todos module's DB, so there is no foreign key.
+model RoutineRun {
+  id        String   @id @default(cuid())
+  routineId String
+  routine   Routine  @relation(fields: [routineId], references: [id], onDelete: Cascade)
+  todoIds   String[]
+  createdAt DateTime @default(now())
+
+  @@index([routineId])
+}
