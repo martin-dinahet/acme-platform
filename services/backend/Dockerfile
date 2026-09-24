@@ -9,12 +9,14 @@ FROM base AS build
 # Prisma config needs these to exist at generate time. Real values come at runtime.
 ENV AUTH_DATABASE_URL=dummy://build:placeholder@localhost:5432/dummy
 ENV TODOS_DATABASE_URL=dummy://build:placeholder@localhost:5432/dummy
+ENV ROUTINES_DATABASE_URL=dummy://build:placeholder@localhost:5432/dummy
 COPY bun.lock package.json turbo.json tsconfig.json ./
 COPY packages ./packages
 COPY services ./services
 RUN bun install --frozen-lockfile
 RUN bun run --cwd packages/backend/auth db:generate
 RUN bun run --cwd packages/backend/todos db:generate
+RUN bun run --cwd packages/backend/routines db:generate
 RUN bun run turbo run build --filter=@acme/backend
 
 # ---------- Runtime ----------
@@ -25,4 +27,4 @@ COPY --from=build /app/node_modules /app/node_modules
 COPY --from=build /app/packages /app/packages
 COPY --from=build /app/services/backend .
 EXPOSE 3000
-CMD ["sh", "-c", "cd /app/packages/backend/auth && node_modules/.bin/prisma migrate deploy && cd /app/packages/backend/todos && node_modules/.bin/prisma migrate deploy && cd /app/services/backend && node dist/index.js"]
+CMD ["sh", "-c", "cd /app/packages/backend/auth && node_modules/.bin/prisma migrate deploy && cd /app/packages/backend/todos && node_modules/.bin/prisma migrate deploy && cd /app/packages/backend/routines && node_modules/.bin/prisma migrate deploy && cd /app/services/backend && node dist/index.js"]

@@ -1,4 +1,5 @@
 import { type AuthVariables, authHandler, requireAuth } from "@acme/backend-auth";
+import { routinesRoutes } from "@acme/backend-routines";
 import { todosRoutes } from "@acme/backend-todos";
 import { Hono } from "hono";
 import { except } from "hono/combine";
@@ -14,4 +15,5 @@ export const app = new Hono<{ Variables: AuthVariables }>() //
   .use("*", cors({ origin: env.WEB_ORIGINS, credentials: true }))
   .use("*", except(PUBLIC, csrf({ origin: env.WEB_ORIGINS }), requireAuth))
   .on(["GET", "POST"], "/auth/*", (c) => authHandler(new Request(c.req.raw, { headers: clientHeaders(c) })))
-  .route("/", todosRoutes);
+  .route("/", todosRoutes)
+  .route("/", routinesRoutes);

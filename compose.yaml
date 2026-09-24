@@ -24,6 +24,7 @@ services:
       WEB_ORIGINS: http://localhost:5173
       AUTH_DATABASE_URL: postgresql://postgres:postgres@postgres:5432/auth_service
       TODOS_DATABASE_URL: postgresql://postgres:postgres@postgres:5432/todos_service
+      ROUTINES_DATABASE_URL: postgresql://postgres:postgres@postgres:5432/routines_service
       BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET:-dev-only-secret-change-me-0123456789}
       BETTER_AUTH_URL: http://localhost:3000
       TRUSTED_ORIGINS: http://localhost:5173
