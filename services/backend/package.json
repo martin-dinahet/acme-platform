@@ -1,5 +1,5 @@
 {
-  "name": "gateway-service",
+  "name": "@acme/backend",
   "type": "module",
   "scripts": {
     "dev": "tsx watch src/index.ts",
@@ -10,12 +10,11 @@
     "start": "node dist/index.js"
   },
   "dependencies": {
-    "@acme/auth": "workspace:*",
+    "@acme/backend-auth": "workspace:*",
+    "@acme/backend-todos": "workspace:*",
     "@acme/env": "workspace:*",
     "@hono/node-server": "^1.13.0",
-    "dotenv": "^16.6.1",
     "hono": "^4.13.8",
-    "jose": "^6.2.12",
     "zod": "^3.23.0"
   },
   "devDependencies": {
