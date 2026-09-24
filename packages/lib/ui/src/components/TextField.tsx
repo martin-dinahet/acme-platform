@@ -2,7 +2,7 @@ import { Field } from "@base-ui/react/field";
 import * as stylex from "@stylexjs/stylex";
 import type { ComponentPropsWithoutRef } from "react";
 import { useId } from "react";
-import { color, font, radius, space } from "../tokens.stylex.js";
+import { color, font, radius, size, space } from "../tokens.stylex.js";
 
 const styles = stylex.create({
   root: {
@@ -22,7 +22,7 @@ const styles = stylex.create({
     color: color.text,
     backgroundColor: color.bg,
     borderStyle: "solid",
-    borderWidth: "1px",
+    borderWidth: size.borderWidth,
     borderColor: color.border,
     borderRadius: radius.md,
     paddingBlock: space.sm,

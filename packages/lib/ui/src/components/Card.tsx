@@ -1,12 +1,12 @@
 import * as stylex from "@stylexjs/stylex";
 import type { ComponentPropsWithoutRef } from "react";
-import { color, radius, shadow, space } from "../tokens.stylex.js";
+import { color, radius, shadow, size, space } from "../tokens.stylex.js";
 
 const styles = stylex.create({
   base: {
     backgroundColor: color.bg,
     borderStyle: "solid",
-    borderWidth: "1px",
+    borderWidth: size.borderWidth,
     borderColor: color.border,
     borderRadius: radius.lg,
     boxShadow: shadow.sm,

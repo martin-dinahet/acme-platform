@@ -28,6 +28,12 @@ export const space = stylex.defineVars({
   xxl: "32px",
 });
 
+export const size = stylex.defineVars({
+  borderWidth: "1px",
+  formMaxWidth: "360px",
+  contentMaxWidth: "560px",
+});
+
 export const radius = stylex.defineVars({
   sm: "6px",
   md: "10px",

@@ -2,7 +2,7 @@ import { Checkbox as BaseCheckbox } from "@base-ui/react/checkbox";
 import * as stylex from "@stylexjs/stylex";
 import type { ComponentPropsWithoutRef } from "react";
 import { useId } from "react";
-import { color, font, radius, space } from "../tokens.stylex.js";
+import { color, font, radius, size, space } from "../tokens.stylex.js";
 
 const styles = stylex.create({
   row: {
@@ -20,7 +20,7 @@ const styles = stylex.create({
     flexShrink: 0,
     borderRadius: radius.sm,
     borderStyle: "solid",
-    borderWidth: "1px",
+    borderWidth: size.borderWidth,
     borderColor: color.border,
     backgroundColor: color.bg,
     outline: "none",

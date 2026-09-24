@@ -1,6 +1,6 @@
 import * as stylex from "@stylexjs/stylex";
 import type { ComponentPropsWithoutRef } from "react";
-import { color, font, radius, space } from "../tokens.stylex.js";
+import { color, font, radius, size, space } from "../tokens.stylex.js";
 
 const styles = stylex.create({
   base: {
@@ -12,7 +12,7 @@ const styles = stylex.create({
     fontWeight: font.weightMedium,
     borderRadius: radius.md,
     borderStyle: "solid",
-    borderWidth: "1px",
+    borderWidth: size.borderWidth,
     outline: "none",
     cursor: { default: "pointer", ":disabled": "not-allowed" },
     opacity: { default: 1, ":disabled": 0.5 },
