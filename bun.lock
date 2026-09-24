@@ -11,25 +11,8 @@
         "typescript": "^7.0.2",
       },
     },
-    "packages/api-client": {
-      "name": "@acme/api-client",
-      "dependencies": {
-        "better-auth": "^1.7.5",
-        "hono": "^4.13.8",
-        "todos-service": "workspace:*",
-      },
-      "devDependencies": {
-        "@acme/typescript-config": "workspace:*",
-        "@types/react": "^19.3.0",
-        "react": "^19.3.0",
-        "typescript": "latest",
-      },
-      "peerDependencies": {
-        "react": "^19.0.0",
-      },
-    },
-    "packages/auth": {
-      "name": "@acme/auth",
+    "packages/backend/auth": {
+      "name": "@acme/backend-auth",
       "dependencies": {
         "@acme/env": "workspace:*",
         "@better-auth/prisma-adapter": "^1.7.5",
@@ -37,6 +20,7 @@
         "@prisma/client": "7.10.0",
         "better-auth": "^1.7.5",
         "dotenv": "^16.6.1",
+        "hono": "^4.13.8",
         "pg": "^8.23.0",
         "zod": "^3.23.0",
       },
@@ -48,7 +32,64 @@
         "typescript": "latest",
       },
     },
-    "packages/env": {
+    "packages/backend/todos": {
+      "name": "@acme/backend-todos",
+      "dependencies": {
+        "@acme/env": "workspace:*",
+        "@hono/zod-validator": "^0.9.1",
+        "@prisma/adapter-pg": "^7.0.0",
+        "@prisma/client": "7.10.0",
+        "dotenv": "^16.6.1",
+        "hono": "^4.13.8",
+        "pg": "^8.0.0",
+        "zod": "^3.23.0",
+      },
+      "devDependencies": {
+        "@acme/typescript-config": "workspace:*",
+        "@types/node": "latest",
+        "@types/pg": "latest",
+        "prisma": "7.10.0",
+        "typescript": "latest",
+      },
+    },
+    "packages/frontend/auth": {
+      "name": "@acme/frontend-auth",
+      "dependencies": {
+        "@acme/env": "workspace:*",
+        "@acme/ui": "workspace:*",
+        "@stylexjs/stylex": "^0.19.1",
+        "better-auth": "^1.7.5",
+      },
+      "devDependencies": {
+        "@acme/typescript-config": "workspace:*",
+        "@types/react": "^19.3.0",
+        "react": "^19.3.0",
+        "typescript": "latest",
+      },
+      "peerDependencies": {
+        "react": "^19.3.0",
+      },
+    },
+    "packages/frontend/todos": {
+      "name": "@acme/frontend-todos",
+      "dependencies": {
+        "@acme/backend-todos": "workspace:*",
+        "@acme/env": "workspace:*",
+        "@acme/ui": "workspace:*",
+        "@stylexjs/stylex": "^0.19.1",
+        "hono": "^4.13.8",
+      },
+      "devDependencies": {
+        "@acme/typescript-config": "workspace:*",
+        "@types/react": "^19.3.0",
+        "react": "^19.3.0",
+        "typescript": "latest",
+      },
+      "peerDependencies": {
+        "react": "^19.3.0",
+      },
+    },
+    "packages/lib/env": {
       "name": "@acme/env",
       "dependencies": {
         "dotenv": "^16.0.0",
@@ -57,12 +98,13 @@
       "devDependencies": {
         "@acme/typescript-config": "workspace:*",
         "typescript": "latest",
+        "vite": "^8.3.0",
       },
     },
-    "packages/typescript-config": {
+    "packages/lib/typescript-config": {
       "name": "@acme/typescript-config",
     },
-    "packages/ui": {
+    "packages/lib/ui": {
       "name": "@acme/ui",
       "dependencies": {
         "@base-ui/react": "^1.8.0",
@@ -79,15 +121,14 @@
         "react-dom": "^19.3.0",
       },
     },
-    "services/api-gateway": {
-      "name": "gateway-service",
+    "services/backend": {
+      "name": "@acme/backend",
       "dependencies": {
-        "@acme/auth": "workspace:*",
+        "@acme/backend-auth": "workspace:*",
+        "@acme/backend-todos": "workspace:*",
         "@acme/env": "workspace:*",
         "@hono/node-server": "^1.13.0",
-        "dotenv": "^16.6.1",
         "hono": "^4.13.8",
-        "jose": "^6.2.12",
         "zod": "^3.23.0",
       },
       "devDependencies": {
@@ -97,58 +138,15 @@
         "typescript": "latest",
       },
     },
-    "services/service-todos": {
-      "name": "todos-service",
+    "services/frontend": {
+      "name": "@acme/frontend",
       "dependencies": {
-        "@acme/env": "workspace:*",
-        "@hono/node-server": "^1.13.0",
-        "@hono/zod-validator": "^0.9.1",
-        "@prisma/adapter-pg": "^7.0.0",
-        "@prisma/client": "7.10.0",
-        "dotenv": "^16.6.1",
-        "hono": "^4.6.0",
-        "pg": "^8.0.0",
-        "zod": "^3.23.0",
-      },
-      "devDependencies": {
-        "@acme/typescript-config": "workspace:*",
-        "@types/node": "latest",
-        "@types/pg": "latest",
-        "prisma": "7.10.0",
-        "tsx": "latest",
-        "typescript": "latest",
-      },
-    },
-    "services/web": {
-      "name": "web-service",
-      "dependencies": {
-        "@acme/api-client": "workspace:*",
+        "@acme/frontend-auth": "workspace:*",
+        "@acme/frontend-todos": "workspace:*",
         "@acme/ui": "workspace:*",
         "@stylexjs/stylex": "^0.19.1",
         "react": "^19.3.0",
         "react-dom": "^19.3.0",
-        "zod": "^3.23.0",
-      },
-      "devDependencies": {
-        "@acme/typescript-config": "workspace:*",
-        "@stylexjs/unplugin": "^0.19.1",
-        "@types/node": "latest",
-        "@types/react": "^19.3.0",
-        "@types/react-dom": "^19.3.0",
-        "@vitejs/plugin-react": "^6.1.1",
-        "typescript": "latest",
-        "vite": "^8.3.0",
-      },
-    },
-    "services/web-login": {
-      "name": "web-login-service",
-      "dependencies": {
-        "@acme/api-client": "workspace:*",
-        "@acme/ui": "workspace:*",
-        "@stylexjs/stylex": "^0.19.1",
-        "react": "^19.3.0",
-        "react-dom": "^19.3.0",
-        "zod": "^3.23.0",
       },
       "devDependencies": {
         "@acme/typescript-config": "workspace:*",
@@ -169,15 +167,23 @@
     "@prisma/client",
   ],
   "packages": {
-    "@acme/api-client": ["@acme/api-client@workspace:packages/api-client"],
+    "@acme/backend": ["@acme/backend@workspace:services/backend"],
 
-    "@acme/auth": ["@acme/auth@workspace:packages/auth"],
+    "@acme/backend-auth": ["@acme/backend-auth@workspace:packages/backend/auth"],
 
-    "@acme/env": ["@acme/env@workspace:packages/env"],
+    "@acme/backend-todos": ["@acme/backend-todos@workspace:packages/backend/todos"],
 
-    "@acme/typescript-config": ["@acme/typescript-config@workspace:packages/typescript-config"],
+    "@acme/env": ["@acme/env@workspace:packages/lib/env"],
 
-    "@acme/ui": ["@acme/ui@workspace:packages/ui"],
+    "@acme/frontend": ["@acme/frontend@workspace:services/frontend"],
+
+    "@acme/frontend-auth": ["@acme/frontend-auth@workspace:packages/frontend/auth"],
+
+    "@acme/frontend-todos": ["@acme/frontend-todos@workspace:packages/frontend/todos"],
+
+    "@acme/typescript-config": ["@acme/typescript-config@workspace:packages/lib/typescript-config"],
+
+    "@acme/ui": ["@acme/ui@workspace:packages/lib/ui"],
 
     "@babel/code-frame": ["@babel/code-frame@7.29.7", "", { "dependencies": { "@babel/helper-validator-identifier": "^7.29.7", "js-tokens": "^4.0.0", "picocolors": "^1.1.1" } }, "sha512-Aup7aUOfpbAUg2ROOJN6Iw5f9DMBlzu0mIkm/malLQFN/YQgO48wCj0Kxa3sEHJvPVFg7siR+qRInwXd2qhQKw=="],
 
@@ -649,8 +655,6 @@
 
     "fsevents": ["fsevents@2.3.3", "", { "os": "darwin" }, "sha512-5xoDfX+fL7faATnagmWPpbFtwh/R77WmMMqqHGS65C3vvB0YHrgF+B1YmZ3441tMj5n63k0212XNoJwzlhffQw=="],
 
-    "gateway-service": ["gateway-service@workspace:services/api-gateway"],
-
     "generate-function": ["generate-function@2.3.1", "", { "dependencies": { "is-property": "^1.0.2" } }, "sha512-eeB5GfMNeevm/GRYq20ShmsaGcmI81kIX2K9XQx5miC8KdHaC6Jm0qQ8ZNeGOi7wYB8OsdxKs+Y2oVuTFuVwKQ=="],
 
     "gensync": ["gensync@1.0.0-beta.2", "", {}, "sha512-3hN7NaskYvMDLQY55gnW3NQ+mesEAepTqlg+VEbj7zzqEMBVNhzcGYYeqFo/TlYz6eQiFcp1HcsCZO+nGgS8zg=="],
@@ -841,8 +845,6 @@
 
     "tinyglobby": ["tinyglobby@0.2.17", "", { "dependencies": { "fdir": "^6.5.0", "picomatch": "^4.0.4" } }, "sha512-wXR/dYpcqKmfWpEdZjiKJOwCNFndD0DMnrW/cYjVGttEkBfVgcLFHoNrlj47mjOVic9yyNu65alsgF4NQyTa2g=="],
 
-    "todos-service": ["todos-service@workspace:services/service-todos"],
-
     "tsx": ["tsx@4.23.15", "", { "dependencies": { "esbuild": "~0.28.0" }, "optionalDependencies": { "fsevents": "~2.3.3" }, "bin": { "tsx": "dist/cli.mjs" } }, "sha512-Yiex1Ovn8z2xPpOWckIiysV1SSyRMY9BkLF++q0yKiDxCqRhosKfMg3janKkiLBwZ5c/YryloKwGZcrEmtwxKw=="],
 
     "turbo": ["turbo@2.11.2", "", { "optionalDependencies": { "@turbo/darwin-64": "2.11.2", "@turbo/darwin-arm64": "2.11.2", "@turbo/linux-64": "2.11.2", "@turbo/linux-arm64": "2.11.2", "@turbo/windows-64": "2.11.2", "@turbo/windows-arm64": "2.11.2" }, "bin": { "turbo": "bin/turbo" } }, "sha512-s0GhnWXlAAN+wb2GRMQxnZgFweRWTAceRWW/4Lk9iHj7QuLZMjDxQQqu+Xoh7Nckuy8UiSim520w6yqP2+ertw=="],
@@ -860,10 +862,6 @@
     "valibot": ["valibot@1.4.2", "", { "peerDependencies": { "typescript": ">=5" }, "optionalPeers": ["typescript"] }, "sha512-gjdCvJ6d3RyHAneqxMYMW9QMCwYMb3jpOO0IyHZV1bnRHFBHrX3VkIILt5XYR0WhwHiH7Mty8ovuPZ/O3gamrg=="],
 
     "vite": ["vite@8.3.0", "", { "dependencies": { "lightningcss": "^1.33.0", "picomatch": "^4.0.7", "postcss": "^8.5.28", "rolldown": "~1.2.6", "tinyglobby": "^0.2.17" }, "optionalDependencies": { "fsevents": "~2.3.3" }, "peerDependencies": { "@types/node": "^20.19.0 || >=22.12.0", "@vitejs/devtools": "^0.7.1", "esbuild": "^0.27.0 || ^0.28.0", "jiti": ">=1.21.0", "less": "^4.0.0", "sass": "^1.70.0", "sass-embedded": "^1.70.0", "stylus": ">=0.54.8", "sugarss": "^5.0.0", "terser": "^5.16.0", "tsx": "^4.8.1", "yaml": "^2.4.2" }, "optionalPeers": ["@types/node", "@vitejs/devtools", "esbuild", "jiti", "less", "sass", "sass-embedded", "stylus", "sugarss", "terser", "tsx", "yaml"], "bin": { "vite": "bin/vite.js" } }, "sha512-lhZBVvEHefgE+HQZC9O7EBJgCU/nVzFNl7vkS4RE0APtWLP02/8QVIkQtzBxPquh7lq5/78NHipTj7ODQ6XuyQ=="],
-
-    "web-login-service": ["web-login-service@workspace:services/web-login"],
-
-    "web-service": ["web-service@workspace:services/web"],
 
     "webpack-virtual-modules": ["webpack-virtual-modules@0.6.2", "", {}, "sha512-66/V2i5hQanC51vBQKPH4aI8NMAcBW59FVBs+rC7eGHupMyfn34q7rZIE+ETlJ+XTevqfUhVVBgSUNSW2flEUQ=="],
 

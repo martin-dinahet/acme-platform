@@ -13,67 +13,37 @@ services:
       - pgdata:/var/lib/postgresql/data
       - ./scripts/init-databases.sh:/docker-entrypoint-initdb.d/init-databases.sh
 
-  todos:
+  backend:
     build:
       context: .
-      dockerfile: services/service-todos/Dockerfile
-    container_name: acme-todos
-    restart: unless-stopped
-    environment:
-      PORT: 3001
-      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/todos_service
-    depends_on:
-      - postgres
-    ports:
-      - "3001:3001"
-
-  gateway:
-    build:
-      context: .
-      dockerfile: services/api-gateway/Dockerfile
-    container_name: acme-gateway
+      dockerfile: services/backend/Dockerfile
+    container_name: acme-backend
     restart: unless-stopped
     environment:
       PORT: 3000
-      TODOS_URL: http://todos:3001
-      WEB_ORIGINS: http://localhost:5173,http://localhost:5174
-      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/auth_service
+      WEB_ORIGINS: http://localhost:5173
+      AUTH_DATABASE_URL: postgresql://postgres:postgres@postgres:5432/auth_service
+      TODOS_DATABASE_URL: postgresql://postgres:postgres@postgres:5432/todos_service
       BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET:-dev-only-secret-change-me-0123456789}
       BETTER_AUTH_URL: http://localhost:3000
-      TRUSTED_ORIGINS: http://localhost:5173,http://localhost:5174
+      TRUSTED_ORIGINS: http://localhost:5173
     depends_on:
       - postgres
-      - todos
     ports:
       - "3000:3000"
 
-  web:
+  frontend:
     build:
       context: .
-      dockerfile: services/web/Dockerfile
+      dockerfile: services/frontend/Dockerfile
       args:
         VITE_API_URL: http://localhost:3000
-        VITE_LOGIN_URL: http://localhost:5174
-    container_name: acme-web
+    container_name: acme-frontend
     restart: unless-stopped
     depends_on:
-      - gateway
+      - backend
     ports:
       - "5173:80"
-
-  login:
-    build:
-      context: .
-      dockerfile: services/web-login/Dockerfile
-      args:
-        VITE_API_URL: http://localhost:3000
-        VITE_APP_URL: http://localhost:5173
-    container_name: acme-login
-    restart: unless-stopped
-    depends_on:
-      - gateway
-    ports:
-      - "5174:80"
 
 volumes:
   pgdata:
