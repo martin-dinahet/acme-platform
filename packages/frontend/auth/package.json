@@ -1,28 +1,22 @@
 {
-  "name": "@acme/api-client",
+  "name": "@acme/frontend-auth",
   "type": "module",
   "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "default": "./dist/index.js"
-    }
+    ".": "./src/index.ts"
   },
   "scripts": {
     "lint": "biome lint .",
     "format": "biome check --write .",
-    "typecheck": "tsc --noEmit",
-    "build": "tsc"
+    "typecheck": "tsc --noEmit"
   },
-  "files": [
-    "dist"
-  ],
   "dependencies": {
-    "better-auth": "^1.7.5",
-    "hono": "^4.13.8",
-    "todos-service": "workspace:*"
+    "@acme/env": "workspace:*",
+    "@acme/ui": "workspace:*",
+    "@stylexjs/stylex": "^0.19.1",
+    "better-auth": "^1.7.5"
   },
   "peerDependencies": {
-    "react": "^19.0.0"
+    "react": "^19.3.0"
   },
   "devDependencies": {
     "@acme/typescript-config": "workspace:*",
