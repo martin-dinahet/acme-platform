@@ -64,3 +64,14 @@ Known defects in baseline: todos not scoped to user; missing todo returns 500; `
 - Module config comes from the factory (`createAuthModule({ baseURL, secret, trustedOrigins })`). Only `db` reads env (`DATABASE_URL`).
 - Old `services/auth` deleted in this phase (it imported the old `authHandler`). Each old service is deleted in the phase that replaces its module, so typecheck stays green.
 - Backend packages now export `src/*.ts` directly (no `tsc` build, no `dist`). Bun runs TS. Reason: less build config.
+
+### Phase 3: `todos` module
+
+- Layers: `domain/todo.ts`, `application/*` (1 use case per file + `todo-repository.ts` port), `infrastructure/todo-repository.ts` (`db()`, model `todo` only), `http/routes.ts`, `api.ts`, `use-cases.ts`, `index.ts`.
+- Owner scope: repository uses `findFirst/updateMany/deleteMany` with `{ id, ownerId }`. No throw on a missing row. Other user's todo = 404 (same as missing). Missing todo: 404 (baseline: 500).
+- `createMany` runs in the injected `TransactionRunner`. Called from routines, it joins the outer transaction.
+- `ts-result` friction: `Result` is a class, not a discriminated union. `if (r.isSuccess()) … else …` does not narrow the `else` branch. `match()` infers its return type from the `success` branch only, so a Hono route with 200 + 404 in `match` does not typecheck. Pattern used: `if (r.isFailure()) return c.json(…, statusOf(r.error)); const v = r.unwrapOrThrow();`.
+- `DELETE /api/todos/:id` now returns `{ id }` (baseline: `{ todo }`). Frontend ignores the body.
+- Frontend: `hc<TodosRoutes>` with `import type` from `@acme/backend-todos`. Typecheck passes, RPC types infer.
+- Tests: `use-cases.test.ts` (6), `http/routes.test.ts` (4), `infrastructure/todo-repository.int.test.ts` (3).
+- Old `services/todos` and `/internal` routes deleted.
