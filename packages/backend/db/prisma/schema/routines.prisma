@@ -1,0 +1,57 @@
+// Owner: `@acme/backend-routines`.
+
+/// A reusable checklist. A run of it makes one todo for each step.
+model Routine {
+  id        String        @id @default(cuid())
+  /// Better Auth user ID (`auth.user.id`). Plain column, no FK: other module (R5).
+  ownerId   String
+  name      String
+  steps     RoutineStep[]
+  runs      RoutineRun[]
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+
+  @@index([ownerId])
+  @@map("routine")
+  @@schema("routines")
+}
+
+model RoutineStep {
+  id        String  @id @default(cuid())
+  routineId String
+  routine   Routine @relation(fields: [routineId], references: [id], onDelete: Cascade)
+  position  Int
+  title     String
+
+  @@unique([routineId, position])
+  @@map("routine_step")
+  @@schema("routines")
+}
+
+/// One run of a routine.
+model RoutineRun {
+  id        String           @id @default(cuid())
+  /// Better Auth user ID (`auth.user.id`). Plain column, no FK: other module (R5).
+  ownerId   String
+  routineId String
+  routine   Routine          @relation(fields: [routineId], references: [id], onDelete: Cascade)
+  todos     RoutineRunTodo[]
+  createdAt DateTime         @default(now())
+
+  @@index([routineId])
+  @@map("routine_run")
+  @@schema("routines")
+}
+
+/// The todos that a run made. FK to the run only.
+model RoutineRunTodo {
+  runId    String
+  run      RoutineRun @relation(fields: [runId], references: [id], onDelete: Cascade)
+  /// Todo ID (`todos.todo.id`). Plain column, no FK: other module (R5).
+  todoId   String
+  position Int
+
+  @@id([runId, todoId])
+  @@map("routine_run_todo")
+  @@schema("routines")
+}

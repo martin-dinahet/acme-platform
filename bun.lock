@@ -6,7 +6,11 @@
       "name": "acme-platform",
       "devDependencies": {
         "@biomejs/biome": "2.5.12",
+        "@types/bun": "^1.4.2",
         "@types/node": "^26.4.1",
+        "@types/pg": "^8.23.1",
+        "dotenv": "^16.6.1",
+        "pg": "^8.23.0",
         "turbo": "^2.10.12",
         "typescript": "^7.0.2",
       },
@@ -28,6 +32,24 @@
         "@types/node": "latest",
         "@types/pg": "latest",
         "prisma": "7.10.0",
+        "typescript": "latest",
+      },
+    },
+    "packages/backend/db": {
+      "name": "@acme/backend-db",
+      "dependencies": {
+        "@acme/env": "workspace:*",
+        "@prisma/adapter-pg": "7.10.0",
+        "@prisma/client": "7.10.0",
+        "dotenv": "^16.6.1",
+        "pg": "^8.23.0",
+        "prisma": "7.10.0",
+        "zod": "^3.23.0",
+      },
+      "devDependencies": {
+        "@acme/typescript-config": "workspace:*",
+        "@types/bun": "latest",
+        "@types/pg": "latest",
         "typescript": "latest",
       },
     },
@@ -252,6 +274,8 @@
   ],
   "packages": {
     "@acme/backend-auth": ["@acme/backend-auth@workspace:packages/backend/auth"],
+
+    "@acme/backend-db": ["@acme/backend-db@workspace:packages/backend/db"],
 
     "@acme/backend-routines": ["@acme/backend-routines@workspace:packages/backend/routines"],
 
@@ -549,6 +573,8 @@
 
     "@turbo/windows-arm64": ["@turbo/windows-arm64@2.11.2", "", { "os": "win32", "cpu": "arm64" }, "sha512-u0M3m1aXo9lpDM/2iQhxlGzgWjHFq/MC4TqHn1YAvxk8g1wGtzRB2QBx/SLqRChhPhC29mzaB8eLcxKh/pcM1g=="],
 
+    "@types/bun": ["@types/bun@1.4.2", "", { "dependencies": { "bun-types": "1.4.2" } }, "sha512-GimotNn7+ZV0uVArItBbriZsR1oNf0+WTzPkdcFrzShI7k2norL0uzEaJT8T33dWr7O/c9ZDuAFQrctKCi72oQ=="],
+
     "@types/d3-array": ["@types/d3-array@3.0.3", "", {}, "sha512-Reoy+pKnvsksN0lQUlcH6dOGjRZ/3WRwXR//m+/8lt1BXeI4xyaUZoqULNjyXXRuh0Mj4LNpkCvhUpQlY3X5xQ=="],
 
     "@types/d3-color": ["@types/d3-color@3.1.0", "", {}, "sha512-HKuicPHJuvPgCD+np6Se9MQvS6OCbJmOjGvylzMJRlDwUXjKTTXs6Pwgk79O09Vj/ho3u1ofXnhFOaEWWPrlwA=="],
@@ -658,6 +684,8 @@
     "better-result": ["better-result@2.10.0", "", {}, "sha512-oQhh0y1qo2/ZKdAAEvHZAqKKiHOFU5k/bW96fE2ScgQOVkJRiHwB+nOS1SgFsYqRlxMDWvefXi9Q3px7QvgNDw=="],
 
     "browserslist": ["browserslist@4.29.0", "", { "dependencies": { "baseline-browser-mapping": "^2.11.23", "caniuse-lite": "^1.0.30001810", "electron-to-chromium": "^1.5.427", "node-releases": "^2.0.55", "update-browserslist-db": "^1.3.3" }, "bin": { "browserslist": "cli.js" } }, "sha512-3GSvyjvDI4Dur1Meg2BekJquu5uF+9R9a1+5M1Mde192eZoXbeXjzgOsgqPS2V8D5wrrip0gR5Hf/GhWQ9ZzaA=="],
+
+    "bun-types": ["bun-types@1.4.2", "", { "dependencies": { "@types/node": "*" } }, "sha512-bxV1FgK7yBIzjRe5zBozIM4Bem11ZJcCXSrjWRG3YWLt8yFDePu4cLjpebO8OvPeIE9trbyPF4fuj3Cia4Fj3w=="],
 
     "c12": ["c12@3.3.4", "", { "dependencies": { "chokidar": "^5.0.0", "confbox": "^0.2.4", "defu": "^6.1.6", "dotenv": "^17.3.1", "exsolve": "^1.0.8", "giget": "^3.2.0", "jiti": "^2.6.1", "ohash": "^2.0.11", "pathe": "^2.0.3", "perfect-debounce": "^2.1.0", "pkg-types": "^2.3.0", "rc9": "^3.0.1" }, "peerDependencies": { "magicast": "*" }, "optionalPeers": ["magicast"] }, "sha512-cM0ApFQSBXuourJejzwv/AuPRvAxordTyParRVcHjjtXirtkzM0uK2L9TTn9s0cXZbG7E55jCivRQzoxYmRAlA=="],
 

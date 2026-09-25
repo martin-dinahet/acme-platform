@@ -1,0 +1,32 @@
+{
+  "name": "@acme/backend-db",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./testing": "./src/testing.ts"
+  },
+  "scripts": {
+    "build": "prisma generate",
+    "lint": "biome lint .",
+    "format": "biome check --write .",
+    "typecheck": "tsc --noEmit",
+    "db:generate": "prisma generate",
+    "db:migrate": "prisma migrate dev",
+    "db:deploy": "prisma migrate deploy"
+  },
+  "dependencies": {
+    "@acme/env": "workspace:*",
+    "@prisma/adapter-pg": "7.10.0",
+    "@prisma/client": "7.10.0",
+    "dotenv": "^16.6.1",
+    "pg": "^8.23.0",
+    "prisma": "7.10.0",
+    "zod": "^3.23.0"
+  },
+  "devDependencies": {
+    "@acme/typescript-config": "workspace:*",
+    "@types/bun": "latest",
+    "@types/pg": "latest",
+    "typescript": "latest"
+  }
+}

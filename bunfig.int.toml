@@ -1,0 +1,3 @@
+[test]
+# Used by `scripts/test-int.ts` with the path filter `.int.test.`. Same as `bunfig.toml`, but int tests are not ignored.
+pathIgnorePatterns = ["**/node_modules/**"]

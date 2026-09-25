@@ -1,0 +1,3 @@
+[test]
+# `bun test` runs unit tests only. Integration tests need a database: run `bun run test:int`.
+pathIgnorePatterns = ["**/node_modules/**", "**/*.int.test.ts"]

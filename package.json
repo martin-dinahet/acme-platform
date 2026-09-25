@@ -12,7 +12,9 @@
     "lint": "turbo run lint",
     "format": "turbo run format",
     "typecheck": "turbo run typecheck",
-    "build": "turbo run build"
+    "build": "turbo run build",
+    "test": "bun test",
+    "test:int": "bun scripts/test-int.ts"
   },
   "devEngines": {
     "packageManager": {
@@ -23,7 +25,11 @@
   },
   "devDependencies": {
     "@biomejs/biome": "2.5.12",
+    "@types/bun": "^1.4.2",
     "@types/node": "^26.4.1",
+    "@types/pg": "^8.23.1",
+    "dotenv": "^16.6.1",
+    "pg": "^8.23.0",
     "turbo": "^2.10.12",
     "typescript": "^7.0.2"
   },

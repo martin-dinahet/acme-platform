@@ -1,0 +1,16 @@
+// Owner: `@acme/backend-todos`.
+
+model Todo {
+  id        String   @id @default(cuid())
+  /// Better Auth user ID (`auth.user.id`). Plain column, no FK: other module (R5).
+  ownerId   String
+  title     String
+  completed Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([ownerId])
+  @@index([completed, updatedAt])
+  @@map("todo")
+  @@schema("todos")
+}

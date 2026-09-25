@@ -41,3 +41,17 @@ Smoke check: sign-up through gateway returns 200. `POST /api/routines` returns 2
 | 5 Dockerfiles + `compose.yaml` + `scripts/init-databases.sh` | 233 | deploy config |
 
 Known defects in baseline: todos not scoped to user; missing todo returns 500; `RoutineRun.todoIds String[]` without FK; routines not scoped to user.
+
+## Phase log
+
+### Phase 1: `db` package
+
+- Multi-file schema: `packages/backend/db/prisma/schema/{_datasource,auth,todos,routines}.prisma`. `prisma.config.ts` has `schema: "prisma/schema"` (folder). Source: installed `@prisma/config@7.10.0` types, `schema?: string` = "path to the schema file, or path to a folder that shall be recursively searched for *.prisma files".
+- `multiSchema`: no preview flag in Prisma 7.10.0. `datasource.schemas = [...]` + `@@schema(...)`. `prisma migrate dev` output: `schemas "auth, routines, todos"`. The `init` migration has `CREATE SCHEMA IF NOT EXISTS` for each module. `_prisma_migrations` is in `public`.
+- All FKs in `init` stay in one schema (R5): `auth.session/account -> auth.user`, `routines.routine_step/routine_run -> routines.routine`, `routines.routine_run_todo -> routines.routine_run`.
+- `bun --bun prisma migrate deploy` works (Bun runtime, not Node).
+- Interactive transactions: `$transaction(fn, { maxWait, timeout, isolationLevel })` in installed `@prisma/client@7.10.0` types. Default `maxWait` 2000 ms, `timeout` 5000 ms.
+- Test 3 (`packages/backend/db/src/transaction.int.test.ts`): 5 pass. Write through `db()` after `setTimeout`, `setImmediate`, `Promise.resolve` rolls back. Nested call joins outer transaction. Two parallel transactions keep separate contexts.
+- Current Prisma web docs describe Prisma 8, not 7. Prisma 7 facts come from the installed package types and from tests.
+- One Prisma client = one model namespace. Model names must be unique across modules (e.g. two modules cannot both have `Item`). Use a module prefix if this occurs.
+- `resetDatabase()` refuses a database whose name does not end with `_test`. Reason: `bun test` from a wrong shell must not truncate dev data.

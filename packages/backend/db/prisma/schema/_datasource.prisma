@@ -1,0 +1,12 @@
+// Shared by all modules. Each module declares its models in `<module>.prisma` with `@@schema("<module>")`.
+// Rules: a module uses only its own models (R4). No relation crosses two module schemas (R5).
+
+generator client {
+  provider = "prisma-client"
+  output   = "../../src/generated"
+}
+
+datasource db {
+  provider = "postgresql"
+  schemas  = ["auth", "todos", "routines"]
+}
