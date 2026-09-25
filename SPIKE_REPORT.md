@@ -75,3 +75,15 @@ Known defects in baseline: todos not scoped to user; missing todo returns 500; `
 - Frontend: `hc<TodosRoutes>` with `import type` from `@acme/backend-todos`. Typecheck passes, RPC types infer.
 - Tests: `use-cases.test.ts` (6), `http/routes.test.ts` (4), `infrastructure/todo-repository.int.test.ts` (3).
 - Old `services/todos` and `/internal` routes deleted.
+
+### Phase 4: `routines` module
+
+- `TodosPort` (owned by routines): `createMany(ownerId, titles)`, `find(ownerId, ids)`. `delete` removed.
+- `runRoutine`: one `transaction(...)`, no manual rollback. The todos `createMany` use case also calls `transaction(...)`, and it joins the outer one (nested join, test 3).
+- `RoutineRun.todoIds String[]` replaced by `routines.routine_run_todo(runId, todoId, position)`, FK to run only, `todoId` without FK (R5). Domain `RoutineRun.todoIds` stays (repository maps rows to IDs). API shape unchanged.
+- Routines is scoped by `ownerId` too (routine + run). Baseline was not.
+- Test 2 and test 7 (in-process) live in `services/api/src/`, not in `packages/backend/routines`. Reason: they need both modules wired. A routines test cannot import todos (R1) or touch `todo` (R4). The contract suite itself stays in routines (`ports/todos-port.contract.ts`, exported by `@acme/backend-routines/testing`): the port owner owns the contract.
+- Test 2 result: failure on 3rd todo -> `{ todos: 0, runs: 0, runTodos: 0 }`. Control with `transaction = (fn) => fn()`: same failure -> `{ todos: 2, runs: 0, runTodos: 0 }` (2 orphans). Control without failure: `{ 3, 1, 3 }`.
+- Contract (7 cases) passes against the in-memory fake (unit) and the in-process adapter (int, real DB).
+- A run failure now gives 500 (Hono default). Baseline gave 502 after compensation.
+- Old `services/routines`, HTTP adapter, `TODOS_SERVICE_URL` deleted.

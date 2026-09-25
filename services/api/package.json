@@ -1,10 +1,6 @@
 {
-  "name": "@acme/backend-routines",
+  "name": "@acme/service-api",
   "type": "module",
-  "exports": {
-    ".": "./src/index.ts",
-    "./testing": "./src/testing/index.ts"
-  },
   "scripts": {
     "lint": "biome lint .",
     "format": "biome check --write .",
@@ -13,9 +9,9 @@
   "dependencies": {
     "@acme/backend-db": "workspace:*",
     "@acme/backend-kernel": "workspace:*",
-    "@hono/zod-validator": "^0.9.1",
-    "hono": "^4.13.8",
-    "zod": "^3.23.0"
+    "@acme/backend-routines": "workspace:*",
+    "@acme/backend-todos": "workspace:*",
+    "hono": "^4.13.8"
   },
   "devDependencies": {
     "@acme/typescript-config": "workspace:*",
