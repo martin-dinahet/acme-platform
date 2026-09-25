@@ -2,20 +2,12 @@
   "name": "@acme/env",
   "type": "module",
   "exports": {
-    ".": {
-      "types": "./dist/env.d.ts",
-      "default": "./dist/env.js"
-    },
+    ".": "./src/env.ts",
     "./web": "./src/web.ts"
   },
   "scripts": {
-    "build": "tsc",
     "typecheck": "tsc --noEmit"
   },
-  "files": [
-    "dist",
-    "src/web.ts"
-  ],
   "dependencies": {
     "dotenv": "^16.0.0",
     "zod": "^3.23.0"

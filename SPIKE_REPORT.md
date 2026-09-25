@@ -100,3 +100,62 @@ Known defects in baseline: todos not scoped to user; missing todo returns 500; `
 - Docker build issue: `prisma generate` reads the `db` tsconfig, which extends `@acme/typescript-config`. With `bun install --production` that dev dependency is missing -> generate fails. Fix: `@acme/typescript-config` is a runtime dependency of `db`.
 - Test 4 (`services/api/src/app.int.test.ts`): 2 real Better Auth sessions through `app.request()`. Bob: list = empty; read/update/delete todo = 404; read/update/delete/run/list-runs routine = 404. No session = 401.
 - Test 5 (`services/worker/src/lib/with-lock.int.test.ts`): 5 pass.
+
+### Phase 6: architecture tests + scale check
+
+Architecture tests (`tests/architecture/`, run by `bun test`):
+- `rules.ts`: R1–R7 as pure functions `(path, source) -> violations`. Imports parsed by regex (multi-line, `import type`, re-export, dynamic `import()`). R4: `model X` from each `<module>.prisma` -> camelCase -> checks `db().x`, `tx.x`, `prisma.x`. R4 also: `services/*` non-test code uses no Prisma model (worker must use the todos API). R5: a field in `<module>.prisma` whose type is a model of another module file.
+- `architecture.test.ts`: 7 repo checks (R1–R7) + 8 fixture tests (each rule fails on a bad string, passes on a good one) + 1 sanity test (> 50 files scanned). 16 pass.
+- Planted-violation check (file added, then removed): output `R1 packages/backend/routines/src/zz-bad.ts:2 module "routines" imports "@acme/backend-todos"`, `R2 …:2 imports factory "createTodosModule" outside services/*`, `R4 …:4 uses Prisma model "todo" of an other module`.
+- Root files (`tests`, `scripts`, `services/frontend/serve.ts`) added to `bun run typecheck` (`tsconfig.root.json`) and `bun run lint`.
+
+Issues found only in Docker (not in local dev):
+1. `@acme/env` exported `dist/env.js` (tsc build). Images have no `dist` -> `Cannot find module '@acme/env'`, api/worker restart loop. Local dev worked only because Turbo had built `dist` before. Fix: `@acme/env` exports `src/env.ts` (same as the backend packages).
+2. One `docker compose up --build` failed at `bun install --frozen-lockfile` in the worker image. The same build passed on retry without change. Probably a registry fetch error during 4 parallel installs. Not investigated further.
+
+Scale run (compose project `acme-spike`, `POSTGRES_PORT=5434`, `FRONTEND_PORT=5183`, `JOB_INTERVAL_MS=10000`):
+
+```
+$ docker compose -p acme-spike down -v
+$ docker compose -p acme-spike up -d --build --scale api=3 --scale worker=2
+acme-spike-api-1/2/3        Up
+acme-spike-edge-1           Up   0.0.0.0:3000->3000
+acme-spike-frontend-1       Up   0.0.0.0:5183->80
+acme-spike-migrate-1        Exited (0)          # "All migrations have been successfully applied."
+acme-spike-postgres-1       Up (healthy)
+acme-spike-worker-1/2       Up
+```
+
+Load balancing and session on all replicas (one cookie, full flow through edge):
+```
+POST /api/auth/sign-up/email -> 200 [ffa0cee7ffe9]
+POST /api/todos -> 201 [909cb23435ed]
+PUT /api/todos/… -> 200 [b0fe956edfd3]
+POST /api/routines/…/runs -> 201 [ffa0cee7ffe9]
+GET /api/routines/…/runs -> 200 [b0fe956edfd3]   progress 1/3
+GET /api/todos/<deleted> -> 404 [909cb23435ed]
+GET /api/auth/get-session -> 200 [b0fe956edfd3]
+distinct x-served-by: ffa0cee7ffe9, 909cb23435ed, b0fe956edfd3
+$ curl -D - localhost:3000/health  (x6) -> 909c, b0fe, ffa0, 909c, b0fe, ffa0   (round robin)
+```
+
+Worker lock (per-tick summary of `docker compose logs --timestamps worker`; one old completed todo inserted by SQL before):
+```
+22:36:50 ran=7fddbadd1fee(count 0) skipped=1
+22:37:10 ran=1befb6bdb04e(count 1) skipped=1     # the old todo, purged once
+22:37:20 ran=7fddbadd1fee(count 0) skipped=1
+…
+22:40:20 ran=7fddbadd1fee(count 0) skipped=2     # 3 workers from here
+22:40:40 ran=1befb6bdb04e(count 0) skipped=2
+ticks=24 ticks-without-exactly-one-winner=0
+```
+Raw lines: `{"job":"purge-completed-todos","ran":true,"count":1,"host":"1befb6bdb04e"}` / `{"job":"purge-completed-todos","ran":false,"count":0,"host":"7fddbadd1fee"}`.
+
+Separate scaling (no restart of other containers):
+```
+$ docker compose -p acme-spike up -d --no-recreate --scale api=2 --scale worker=3
+api-1, api-2 Up 3 minutes; worker-1, worker-2 Up 3 minutes; worker-3 Up <1 s   (api-3 removed)
+after 7 s, edge: x-served-by b0fe, 909c, b0fe, 909c   (Caddy dynamic A refresh 5 s)
+```
+
+Browser (Chrome, http://localhost:5183 -> edge :3000 -> 3 api): sign-up, empty list for new user (data of other test user not visible), add 2 todos, toggle 1, delete 1, reload (state kept), sign out, sign in (state kept). The frontend has no routines UI (none in base commit `576d85b` either). Routines CRUD, run and run progress checked through the edge with the API only (see flow above).

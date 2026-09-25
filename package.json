@@ -9,9 +9,9 @@
   ],
   "scripts": {
     "dev": "turbo run dev",
-    "lint": "turbo run lint",
+    "lint": "turbo run lint && biome lint tests scripts services/frontend/serve.ts",
     "format": "turbo run format",
-    "typecheck": "turbo run typecheck",
+    "typecheck": "turbo run typecheck && tsc -p tsconfig.root.json",
     "build": "turbo run build",
     "test": "bun test",
     "test:int": "bun scripts/test-int.ts"
