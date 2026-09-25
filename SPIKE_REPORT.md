@@ -55,3 +55,12 @@ Known defects in baseline: todos not scoped to user; missing todo returns 500; `
 - Current Prisma web docs describe Prisma 8, not 7. Prisma 7 facts come from the installed package types and from tests.
 - One Prisma client = one model namespace. Model names must be unique across modules (e.g. two modules cannot both have `Item`). Use a module prefix if this occurs.
 - `resetDatabase()` refuses a database whose name does not end with `_test`. Reason: `bun test` from a wrong shell must not truncate dev data.
+
+### Phase 2: `kernel` + `auth`
+
+- `@punpun-dev/ts-result@0.1.4` installs and is used. Its API is class-based: `Result.success/failure`, `isSuccess()`, `mapValue`, `flatMapValue`, `match`, `Result.handle`. Not `ok/err/map/flatMap/handle` as the task says. `kernel` adds `ok`, `err`, `notFound` aliases and `statusOf(error)`.
+- Better Auth in schema `auth`: works. `@better-auth/prisma-adapter@1.7.5` calls `db[model].create(...)` on Prisma model delegates, so the Postgres schema is transparent to it. Test `packages/backend/auth/src/auth.int.test.ts`: sign-up writes `auth."user"`, no `public.user` table, `requireUser` works in-process.
+- Better Auth uses the root `prisma` client, not `db()`. Sign-up does not join an outer `runInTransaction`. No use case needs this now.
+- Module config comes from the factory (`createAuthModule({ baseURL, secret, trustedOrigins })`). Only `db` reads env (`DATABASE_URL`).
+- Old `services/auth` deleted in this phase (it imported the old `authHandler`). Each old service is deleted in the phase that replaces its module, so typecheck stays green.
+- Backend packages now export `src/*.ts` directly (no `tsc` build, no `dist`). Bun runs TS. Reason: less build config.

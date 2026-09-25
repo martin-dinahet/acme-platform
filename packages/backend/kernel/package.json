@@ -1,5 +1,5 @@
 {
-  "name": "@acme/backend-auth",
+  "name": "@acme/backend-kernel",
   "type": "module",
   "exports": {
     ".": "./src/index.ts"
@@ -10,11 +10,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@acme/backend-db": "workspace:*",
-    "@acme/backend-kernel": "workspace:*",
-    "@better-auth/prisma-adapter": "^1.7.5",
-    "better-auth": "^1.7.5",
-    "hono": "^4.13.8"
+    "@punpun-dev/ts-result": "^0.1.4"
   },
   "devDependencies": {
     "@acme/typescript-config": "workspace:*",
