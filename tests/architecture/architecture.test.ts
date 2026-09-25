@@ -115,6 +115,8 @@ describe("each rule fails on a bad example", () => {
   test("R6", () => {
     expect(r6("packages/backend/todos/src/a.ts", 'app.route("/internal", internal);')).toMatchObject([{ rule: "R6" }]);
     expect(r6("packages/backend/todos/src/a.ts", 'app.route("/api", api);')).toEqual([]);
+    expect(r6("services/api/src/a.ts", "// no `/internal` routes\n/* \"/internal\" */\nconst x = 1;")).toEqual([]);
+    expect(r6("services/api/src/a.ts", '// ok\nfetch(`${base}` + "/internal/todos");')).toMatchObject([{ line: 2 }]);
   });
 
   test("R7", () => {

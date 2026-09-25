@@ -36,6 +36,12 @@ export const moduleOf = (file: string): ModuleName | null => {
 
 const isTest = (file: string) => /\.test\.tsx?$/.test(file);
 
+/** Replaces `//` and `/* *\/` comments with spaces. Keeps line numbers. Simple: does not parse strings. */
+export const stripComments = (source: string) =>
+  source.replace(/\/\*[\s\S]*?\*\/|(^|[^:"'`])\/\/.*$/gm, (match, prefix = "") =>
+    prefix + match.slice(prefix.length).replace(/[^\n]/g, " "),
+  );
+
 /** R1: a backend module imports only `@acme/backend-db` and `@acme/backend-kernel` of the backend packages. */
 export const r1 = (file: string, source: string): Violation[] => {
   const own = moduleOf(file);
@@ -87,9 +93,10 @@ export const r4 = (file: string, source: string, modelsByModule: Record<ModuleNa
   const allowed = new Set(own ? modelsByModule[own] : []);
   const all = new Set(Object.values(modelsByModule).flat());
   const access = /\b(?:db\(\)|tx|prisma)\s*\.\s*([A-Za-z_]\w*)/g;
-  return [...source.matchAll(access)].flatMap((m) =>
+  const code = stripComments(source);
+  return [...code.matchAll(access)].flatMap((m) =>
     all.has(m[1]) && !allowed.has(m[1])
-      ? [{ rule: "R4", file, line: lineOf(source, m.index), message: `uses Prisma model "${m[1]}" of an other module` }]
+      ? [{ rule: "R4", file, line: lineOf(code, m.index), message: `uses Prisma model "${m[1]}" of an other module` }]
       : [],
   );
 };
@@ -113,7 +120,7 @@ export const r5 = (file: string, source: string, modelsByModule: Record<ModuleNa
 
 /** R6: no `/internal` routes. */
 export const r6 = (file: string, source: string): Violation[] =>
-  [...source.matchAll(/["'`]\/internal\b/g)].map((m) => ({
+  [...stripComments(source).matchAll(/["'`]\/internal\b/g)].map((m) => ({
     rule: "R6",
     file,
     line: lineOf(source, m.index),

@@ -159,3 +159,12 @@ after 7 s, edge: x-served-by b0fe, 909c, b0fe, 909c   (Caddy dynamic A refresh 5
 ```
 
 Browser (Chrome, http://localhost:5183 -> edge :3000 -> 3 api): sign-up, empty list for new user (data of other test user not visible), add 2 todos, toggle 1, delete 1, reload (state kept), sign out, sign in (state kept). The frontend has no routines UI (none in base commit `576d85b` either). Routines CRUD, run and run progress checked through the edge with the API only (see flow above).
+
+### Phase 7: split rehearsal
+
+- `services/api/src/adapters/todos-port.http.ts` (40 lines): `TodosPort` over the public todos API with `hc<TodosRoutes>` (type import only). Not wired in the container. No `/internal` route (R6).
+  - `createMany` = N × `POST /todos`. `find` = `GET /todos` + filter (no batch endpoint).
+  - Needs `headersFor(ownerId)`: the adapter must act as the user. Test forwards the session cookie. A real split needs a service credential + a trusted user ID, or the user's token.
+- Contract test 7 against a running api (`Bun.serve` on a random port, real HTTP, `acme_test`): 7 pass. Same 7 cases pass for in-process adapter and fake. No change to routines application code.
+- `services/api/src/split-rehearsal.int.test.ts`: test 2 scenario over HTTP. Routines still wraps the run in `runInTransaction`, but todos are made by other HTTP requests with their own transactions. Result: HTTP 500, **2 orphan todos**, 0 runs. The atomic claim holds only in-process.
+- Architecture test false positive found: R6 matched `/internal` in a comment of the adapter. Fix: R4 and R6 strip comments first. Fixture added (comment passes, code in string fails).
