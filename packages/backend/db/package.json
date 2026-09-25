@@ -16,6 +16,7 @@
   },
   "dependencies": {
     "@acme/env": "workspace:*",
+    "@acme/typescript-config": "workspace:*",
     "@prisma/adapter-pg": "7.10.0",
     "@prisma/client": "7.10.0",
     "dotenv": "^16.6.1",
@@ -24,7 +25,6 @@
     "zod": "^3.23.0"
   },
   "devDependencies": {
-    "@acme/typescript-config": "workspace:*",
     "@types/bun": "latest",
     "@types/pg": "latest",
     "typescript": "latest"

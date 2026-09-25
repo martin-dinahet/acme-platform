@@ -1,17 +1,27 @@
 {
   "name": "@acme/service-api",
   "type": "module",
+  "exports": {
+    ".": {
+      "types": "./src/app.ts"
+    }
+  },
   "scripts": {
+    "dev": "bun --env-file=../../.env --watch src/index.ts",
+    "start": "bun src/index.ts",
     "lint": "biome lint .",
     "format": "biome check --write .",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@acme/backend-auth": "workspace:*",
     "@acme/backend-db": "workspace:*",
     "@acme/backend-kernel": "workspace:*",
     "@acme/backend-routines": "workspace:*",
     "@acme/backend-todos": "workspace:*",
-    "hono": "^4.13.8"
+    "@acme/env": "workspace:*",
+    "hono": "^4.13.8",
+    "zod": "^3.23.0"
   },
   "devDependencies": {
     "@acme/typescript-config": "workspace:*",

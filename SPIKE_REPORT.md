@@ -87,3 +87,16 @@ Known defects in baseline: todos not scoped to user; missing todo returns 500; `
 - Contract (7 cases) passes against the in-memory fake (unit) and the in-process adapter (int, real DB).
 - A run failure now gives 500 (Hono default). Baseline gave 502 after compensation.
 - Old `services/routines`, HTTP adapter, `TODOS_SERVICE_URL` deleted.
+
+### Phase 5: deployables
+
+- `services/api`: `container.ts` (only file that knows all modules), `app.ts` (CORS, CSRF, `/api/auth/*`, `requireUser`, module routes, `x-served-by`, `/health`, JSON `onError`), `index.ts` (`export default { port, fetch }`). CORS/CSRF behavior same as gateway (`WEB_ORIGINS`). Better Auth `trustedOrigins` = `WEB_ORIGINS` (one variable less).
+- `services/worker`: `container.ts` wires only `todos` (the only module that jobs use), not the full api wiring. Loop ticks on multiples of `JOB_INTERVAL_MS` (aligned between replicas). SIGTERM/SIGINT: finish current tick, `$disconnect`, exit 0 (checked in dev: `stopping` then `worker stopped`).
+- `withLock`: `pg_try_advisory_xact_lock(key::bigint)` in `runInTransaction`; the job writes in the same transaction. Added `holdMs` (worker: `LOCK_HOLD_MS`, default 2000). Reason: a fast job releases the xact lock after a few ms; a replica that tries later in the same tick gets the lock and runs again. Test 5 has a case for this.
+- `services/migrate`: Dockerfile only, `bun --bun prisma migrate deploy`. api and worker do not migrate.
+- `services/frontend`: nginx replaced by `serve.ts` (`Bun.serve`, SPA fallback, path check). Runtime image `oven/bun:1.4.2-alpine`.
+- `services/edge/Caddyfile`: `dynamic a api 3000 { refresh 5s }`, `lb_policy round_robin`, `lb_try_duration 5s`.
+- Local dev: one root `.env`. `services/*` dev scripts use `bun --env-file=../../.env --watch`; `prisma.config.ts` loads root `.env`. Checked: api + worker via `turbo run dev`, full product flow with curl/fetch.
+- Docker build issue: `prisma generate` reads the `db` tsconfig, which extends `@acme/typescript-config`. With `bun install --production` that dev dependency is missing -> generate fails. Fix: `@acme/typescript-config` is a runtime dependency of `db`.
+- Test 4 (`services/api/src/app.int.test.ts`): 2 real Better Auth sessions through `app.request()`. Bob: list = empty; read/update/delete todo = 404; read/update/delete/run/list-runs routine = 404. No session = 401.
+- Test 5 (`services/worker/src/lib/with-lock.int.test.ts`): 5 pass.

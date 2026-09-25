@@ -1,9 +1,8 @@
 {
   "extends": "@acme/typescript-config/base.json",
   "compilerOptions": {
-    "outDir": "dist",
-    "rootDir": "src",
-    "types": ["node"]
+    "noEmit": true,
+    "types": ["bun"]
   },
   "include": ["src"]
 }

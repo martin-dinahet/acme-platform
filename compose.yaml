@@ -1,91 +1,87 @@
+# Modular monolith: one codebase, one database, several deployables.
+# Scale: docker compose up --build --scale api=3 --scale worker=2
+x-database-url: &database-url postgresql://postgres:postgres@postgres:5432/acme
+
 services:
   postgres:
     image: postgres:16-alpine
-    container_name: acme-postgres
     restart: unless-stopped
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
-      POSTGRES_MULTIPLE_DATABASES: ${POSTGRES_MULTIPLE_DATABASES:-}
+      POSTGRES_DB: acme
     ports:
-      - "5432:5432"
+      - "${POSTGRES_PORT:-5432}:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
-      - ./scripts/init-databases.sh:/docker-entrypoint-initdb.d/init-databases.sh
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d acme"]
+      interval: 2s
+      timeout: 3s
+      retries: 30
 
-  # Only public backend entry point. The services below have no published ports.
-  gateway:
+  # One-shot. api and worker start only after it exits 0, so N replicas never race on migrations.
+  migrate:
     build:
       context: .
-      dockerfile: services/gateway/Dockerfile
-    container_name: acme-gateway
+      dockerfile: services/migrate/Dockerfile
+    restart: "no"
+    environment:
+      DATABASE_URL: *database-url
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  # No container_name and no host port: it scales. The edge is the public entry point.
+  api:
+    build:
+      context: .
+      dockerfile: services/api/Dockerfile
     restart: unless-stopped
     environment:
       PORT: 3000
-      WEB_ORIGINS: http://localhost:5173
-      AUTH_SERVICE_URL: http://auth:3001
-      TODOS_SERVICE_URL: http://todos:3002
-      ROUTINES_SERVICE_URL: http://routines:3003
-    depends_on:
-      - auth
-      - todos
-      - routines
-    ports:
-      - "3000:3000"
-
-  auth:
-    build:
-      context: .
-      dockerfile: services/auth/Dockerfile
-    container_name: acme-auth
-    restart: unless-stopped
-    environment:
-      PORT: 3001
-      AUTH_DATABASE_URL: postgresql://postgres:postgres@postgres:5432/auth_service
+      DATABASE_URL: *database-url
+      WEB_ORIGINS: http://localhost:${FRONTEND_PORT:-5173}
       BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET:-dev-only-secret-change-me-0123456789}
-      BETTER_AUTH_URL: http://localhost:3000
-      TRUSTED_ORIGINS: http://localhost:5173
+      BETTER_AUTH_URL: http://localhost:${EDGE_PORT:-3000}
     depends_on:
-      - postgres
+      migrate:
+        condition: service_completed_successfully
 
-  todos:
+  worker:
     build:
       context: .
-      dockerfile: services/todos/Dockerfile
-    container_name: acme-todos
+      dockerfile: services/worker/Dockerfile
     restart: unless-stopped
     environment:
-      PORT: 3002
-      TODOS_DATABASE_URL: postgresql://postgres:postgres@postgres:5432/todos_service
+      DATABASE_URL: *database-url
+      JOB_INTERVAL_MS: ${JOB_INTERVAL_MS:-30000}
+      PURGE_AFTER_DAYS: ${PURGE_AFTER_DAYS:-30}
     depends_on:
-      - postgres
+      migrate:
+        condition: service_completed_successfully
 
-  routines:
-    build:
-      context: .
-      dockerfile: services/routines/Dockerfile
-    container_name: acme-routines
+  edge:
+    image: caddy:2-alpine
     restart: unless-stopped
-    environment:
-      PORT: 3003
-      ROUTINES_DATABASE_URL: postgresql://postgres:postgres@postgres:5432/routines_service
-      TODOS_SERVICE_URL: http://todos:3002
+    ports:
+      - "${EDGE_PORT:-3000}:3000"
+    volumes:
+      - ./services/edge/Caddyfile:/etc/caddy/Caddyfile:ro
     depends_on:
-      - postgres
-      - todos
+      - api
 
   frontend:
     build:
       context: .
       dockerfile: services/frontend/Dockerfile
       args:
-        VITE_API_URL: http://localhost:3000
-    container_name: acme-frontend
+        VITE_API_URL: http://localhost:${EDGE_PORT:-3000}
     restart: unless-stopped
     depends_on:
-      - gateway
+      - edge
     ports:
-      - "5173:80"
+      - "${FRONTEND_PORT:-5173}:80"
 
 volumes:
   pgdata:

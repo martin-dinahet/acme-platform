@@ -2,9 +2,11 @@ node_modules
 **/node_modules
 **/dist
 **/.turbo
-**/src/prisma/generated
+**/generated
 .env
 **/.env
 .git
 .gitignore
 .editorconfig
+.claude
+**/*.test.ts
